@@ -1,0 +1,10 @@
+{"q": "Koliko dana godišnjeg odmora zaposleni ima pravo?", "answerable": true, "file": "pravilnik_o_radu.txt", "pages": [1], "must_contain": ["20"]}
+{"q": "How many days in advance must a vacation request be submitted?", "answerable": true, "file": "pravilnik_o_radu.txt", "pages": [1], "must_contain": ["15"]}
+{"q": "Koliko dana nedeljno se može raditi od kuće?", "answerable": true, "file": "pravilnik_o_radu.txt", "pages": [2], "must_contain": ["dva"]}
+{"q": "What is the daily allowance for business trips abroad?", "answerable": true, "file": "pravilnik_o_radu.txt", "pages": [2], "must_contain": ["50"]}
+{"q": "Koliki je otkazni rok nakon probnog rada?", "answerable": true, "file": "pravilnik_o_radu.txt", "pages": [3], "must_contain": ["30"]}
+{"q": "How long does the confidentiality obligation last after employment ends?", "answerable": true, "file": "pravilnik_o_radu.txt", "pages": [3], "must_contain": ["two years"]}
+{"q": "Da li kompanija isplaćuje novogodišnji bonus zaposlenima?", "answerable": false}
+{"q": "What is the company's parking policy for employees?", "answerable": false}
+{"q": "Koliko iznosi plata direktora?", "answerable": false}
+{"q": "Is there a dress code in the office?", "answerable": false}

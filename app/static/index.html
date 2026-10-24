@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Document Q&amp;A</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; }
+  h1 { font-size: 1.4rem; }
+  section { border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+  input[type=text] { width: 100%; padding: .6rem; box-sizing: border-box; }
+  button { padding: .5rem 1rem; margin-top: .5rem; cursor: pointer; }
+  .cite { background: #f4f6f8; border-left: 3px solid #4a7; padding: .4rem .7rem; margin: .4rem 0; font-size: .9rem; }
+  .refused { border-left-color: #c55; }
+  li { margin: .2rem 0; }
+</style>
+</head>
+<body>
+<h1>Document Q&amp;A</h1>
+<section>
+  <b>Documents</b> (PDF, DOCX, TXT, MD)
+  <ul id="docs"></ul>
+  <input type="file" id="file"> <button onclick="upload()">Upload</button> <span id="up"></span>
+</section>
+<section>
+  <input type="text" id="q" placeholder="Pitanje / Question…" onkeydown="if(event.key==='Enter')ask()">
+  <button onclick="ask()">Ask</button>
+  <div id="out"></div>
+</section>
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function loadDocs() {
+  const r = await (await fetch('/documents')).json();
+  $('docs').innerHTML = r.map(d => `<li>${esc(d.file)} (${d.pages} p.) <a href="#" onclick="del('${d.doc_id}')">remove</a></li>`).join('') || '<li>No documents yet</li>';
+}
+async function upload() {
+  const f = $('file').files[0]; if (!f) return;
+  const fd = new FormData(); fd.append('file', f);
+  $('up').textContent = 'Indexing…';
+  const r = await fetch('/documents', { method: 'POST', body: fd });
+  $('up').textContent = r.ok ? 'Done' : 'Error: ' + (await r.json()).detail;
+  loadDocs();
+}
+async function del(id) { await fetch('/documents/' + id, { method: 'DELETE' }); loadDocs(); }
+async function ask() {
+  const question = $('q').value.trim(); if (!question) return;
+  $('out').textContent = '…';
+  const r = await fetch('/ask', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ question }) });
+  if (!r.ok) { $('out').textContent = 'Error: ' + (await r.json()).detail; return; }
+  const d = await r.json();
+  $('out').innerHTML = `<p>${esc(d.answer)}</p>` + (d.citations.length
+    ? d.citations.map(c => `<div class="cite"><b>${esc(c.file)}, p. ${c.page}</b><br>${esc(c.snippet)}…</div>`).join('')
+    : '<div class="cite refused">No supporting source</div>');
+}
+loadDocs();
+</script>
+</body>
+</html>
