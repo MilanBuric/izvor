@@ -32,7 +32,11 @@ Runs `eval/cases.jsonl` against `sample_docs/` in an isolated index and writes `
 | keyword_ok        | the answer contains the expected fact                              |
 | refused_correctly | for questions the docs can't answer: no answer, no citations       |
 
-Add your own documents and cases (same JSONL format) with `--docs` and `--cases`. Tune `TOP_K`, `MIN_SCORE`, `CHUNK_WORDS` and `LLM_MODEL` (env vars, see `app/config.py`) and compare reports.
+Add your own documents and cases (same JSONL format) with `--docs` and `--cases` (several case files are allowed).
+
+**Generated cases.** `python -m eval.generate_cases` writes questions (clean and "messy": typos, no diacritics, slang) from your documents, filtered so every expected fact really appears on the cited page. Review the output, then run `python -m eval.run_eval --cases eval/cases.jsonl eval/generated_cases.jsonl`. The summary reports clean and messy cases separately.
+
+**Question rewriting.** Imprecise questions are rewritten into a clear version before searching (the original is searched too). Compare with `QUERY_REWRITE=0` and `1`. Tune `TOP_K`, `MIN_SCORE`, `CHUNK_WORDS` and `LLM_MODEL` (env vars, see `app/config.py`) and compare reports.
 
 ## Design notes
 
